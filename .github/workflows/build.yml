@@ -1,0 +1,43 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Setup Java Environment (for Android build)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # For a fully automated build without EAS Cloud you can build locally on the runner
+      - name: Build APK locally via EAS
+        run: eas build --platform android --local --non-interactive --output aurelia-app.apk
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # (Optional depending on if relying fully on local or EAS Cloud)
+
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Aurelia-APK
+          path: aurelia-app.apk
