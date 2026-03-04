@@ -27,17 +27,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
+      - name: Prebuild Android project
+        run: npx expo prebuild --platform android --no-install
 
-      # For a fully automated build without EAS Cloud you can build locally on the runner
-      - name: Build APK locally via EAS
-        run: eas build --platform android --local --non-interactive --output aurelia-app.apk
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # (Optional depending on if relying fully on local or EAS Cloud)
+      - name: Build APK locally
+        run: |
+          cd android
+          ./gradlew assembleRelease
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Aurelia-APK
-          path: aurelia-app.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
