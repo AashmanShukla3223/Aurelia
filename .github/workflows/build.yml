@@ -33,13 +33,10 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
-      - name: Debug - Print settings.gradle
-        run: cat android/settings.gradle
-
       - name: Build APK locally
         run: |
           cd android
-          ./gradlew assembleRelease --stacktrace --info 2>&1 | tail -200
+          ./gradlew assembleRelease --stacktrace
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v4
