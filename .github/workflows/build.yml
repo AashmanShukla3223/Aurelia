@@ -41,6 +41,7 @@ jobs:
       - name: Build APK locally
         run: |
           cd android
+          ./gradlew assembleRelease --debug 2>&1 | grep -E "(node|require|Cannot find|error|Error|FAILURE|failed)" | head -50 || true
           ./gradlew assembleRelease
 
       - name: Upload APK as Artifact
