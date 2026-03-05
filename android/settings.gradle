@@ -27,11 +27,12 @@ plugins {
 }
 
 extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
-  if (System.getenv('EXPO_USE_COMMUNITY_AUTOLINKING') == '1') {
-    ex.autolinkLibrariesFromCommand()
-  } else {
-    ex.autolinkLibrariesFromCommand(expoAutolinking.rnConfigCommand)
-  }
+  def rootNodeModules = new File(rootDir.parentFile, "node_modules").absolutePath
+  def rnCommand = expoAutolinking.rnConfigCommand
+  // Wrap the command with NODE_PATH env injection so node can resolve packages 
+  // from parent workspace root when running from android/ subdirectory
+  def wrappedCommand = ["env", "NODE_PATH=${rootNodeModules}"] + rnCommand
+  ex.autolinkLibrariesFromCommand(wrappedCommand)
 }
 expoAutolinking.useExpoModules()
 
