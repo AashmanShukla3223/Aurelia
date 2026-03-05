@@ -33,7 +33,6 @@ jobs:
       - name: Build APK
         env:
           NODE_PATH: ${{ github.workspace }}/node_modules
-          EXPO_USE_COMMUNITY_AUTOLINKING: "1"
         run: |
           cd android
           ./gradlew assembleRelease
