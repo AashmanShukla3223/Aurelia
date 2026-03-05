@@ -30,12 +30,15 @@ jobs:
       - name: Prebuild Android project
         run: npx expo prebuild --platform android --clean
 
+      - name: Patch Gradle version to 8.x (Expo-compatible)
+        run: |
+          sed -i 's|gradle-9.*-bin.zip|gradle-8.13-bin.zip|g' android/gradle/wrapper/gradle-wrapper.properties
+          cat android/gradle/wrapper/gradle-wrapper.properties
+
       - name: Make gradlew executable
         run: chmod +x android/gradlew
 
       - name: Build APK locally
-        env:
-          NODE_PATH: ${{ github.workspace }}/node_modules
         run: |
           cd android
           ./gradlew assembleRelease
